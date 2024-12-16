@@ -16,7 +16,7 @@ public class LocationService {
             createLocation("DATEV II", "24", "Fürther Str.", "90429", "Nürnberg", 49.45012544898337, 11.059250105139443),
             createLocation("DATEV ITC", "111", "Fürther Str.", "90429", "Nürnberg", 49.45345377045018, 11.04624465078043),
             createLocation("DATEV III", "172", "Sigmundstraße", "90329", "Nürnberg", 49.44701506121979, 11.008057840704229),
-            createLocation("DATEV IIII", "63", "Virnsberger Str.", "90431", "Nürnberg", 49.44747543300277, 11.00621248066461),
+            createLocation("DATEV IV", "63", "Virnsberger Str.", "90431", "Nürnberg", 49.44747543300277, 11.00621248066461),
             createLocation("DATEV CUBE", "1", "Sophie-Germain-Straße", "90443", "Nürnberg", 49.443861375269144, 11.063429894727383)
         );
 

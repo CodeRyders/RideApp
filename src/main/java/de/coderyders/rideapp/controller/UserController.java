@@ -46,4 +46,24 @@ public class UserController {
         userService.deleteFriendship(userId, friendId);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/{id}/give-points")
+    public ResponseEntity<User> givePoints(@PathVariable String id, @RequestParam int points) {
+        User updatedUser = userService.givePoints(id, points);
+        if (updatedUser != null) {
+            return ResponseEntity.ok(updatedUser);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/{id}/remove-points")
+    public ResponseEntity<User> removePoints(@PathVariable String id, @RequestParam int points) {
+        User updatedUser = userService.removePoints(id, points);
+        if (updatedUser != null) {
+            return ResponseEntity.ok(updatedUser);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

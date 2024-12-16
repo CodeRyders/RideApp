@@ -15,4 +15,5 @@ public class User {
     private String id;
     private String customerId;
     private int maxDetourInPercent;
+    private int points;
 }
