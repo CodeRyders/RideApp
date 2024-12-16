@@ -1,5 +1,6 @@
 package de.coderyders.rideapp.controller;
 
+import de.coderyders.rideapp.model.Reward;
 import de.coderyders.rideapp.model.User;
 import de.coderyders.rideapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -64,6 +66,21 @@ public class UserController {
             return ResponseEntity.ok(updatedUser);
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/rewards")
+    public ResponseEntity<Map<String, List<Reward>>> getRewards() {
+        return ResponseEntity.ok(userService.getRewards());
+    }
+
+    @PostMapping("/{id}/redeem")
+    public ResponseEntity<String> redeemReward(@PathVariable String id, @RequestParam String rewardName) {
+        String result = userService.redeemReward(id, rewardName);
+        if (result.equals("Success")) {
+            return ResponseEntity.ok(result);
+        } else {
+            return ResponseEntity.badRequest().body(result);
         }
     }
 }

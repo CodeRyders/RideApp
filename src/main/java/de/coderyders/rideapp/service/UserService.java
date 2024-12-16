@@ -1,6 +1,7 @@
 package de.coderyders.rideapp.service;
 
 import de.coderyders.rideapp.model.Friendship;
+import de.coderyders.rideapp.model.Reward;
 import de.coderyders.rideapp.model.User;
 import de.coderyders.rideapp.model.UserPoints;
 import de.coderyders.rideapp.repository.FriendshipRepository;
@@ -11,6 +12,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,7 +60,7 @@ public class UserService {
         List<String> friendIds = friendshipRepository.findByUserId(id)
                 .stream()
                 .map(Friendship::getFriendId)
-                .collect(Collectors.toList());
+                .toList();
 
         return getAllUsers().stream()
                 .filter(user -> friendIds.contains(user.getId()))
@@ -107,5 +110,50 @@ public class UserService {
             user.setPoints(userPoints.getPoints());
         }
         return user;
+    }
+
+    private final List<Reward> rewards = Arrays.asList(
+            new Reward("Food", "Kaffee", 100),
+            new Reward("Food", "Schäufele", 350),
+            new Reward("Food", "Pizza Margarita", 300),
+            new Reward("Navistimmen", "Santa Claus", 50),
+            new Reward("Navistimmen", "Kermit", 250),
+            new Reward("Navistimmen", "Benjamin Blümchen", 250),
+            new Reward("Skins", "Schlitten", 50),
+            new Reward("Skins", "Frosch", 100),
+            new Reward("Skins", "Elefant", 100)
+    );
+
+    public Map<String, List<Reward>> getRewards() {
+        return rewards.stream()
+                .collect(Collectors.groupingBy(Reward::getCategory));
+    }
+
+    public String redeemReward(String userId, String rewardName) {
+        User user = getUser(userId);
+        if (user == null) {
+            return "User not found";
+        }
+
+        Optional<Reward> rewardOpt = rewards.stream()
+                .filter(r -> r.getName().equals(rewardName))
+                .findFirst();
+
+        if (rewardOpt.isEmpty()) {
+            return "Reward not found";
+        }
+
+        Reward reward = rewardOpt.get();
+
+        if (user.getPoints() < reward.getCost()) {
+            return "Not enough points";
+        }
+
+        user = removePoints(userId, reward.getCost());
+        if (user == null) {
+            return "Error updating user points";
+        }
+
+        return "Success";
     }
 }
