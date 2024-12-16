@@ -15,30 +15,35 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.createUser(user));
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUser(id));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<User> getUser(@PathVariable String id) {
+        User user = userService.getUser(id);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("/{userId}/friends/{friendId}")
-    public ResponseEntity<Void> addFriend(@PathVariable Long userId, @PathVariable Long friendId) {
+    public ResponseEntity<Void> addFriend(@PathVariable String userId, @PathVariable String friendId) {
         userService.addFriend(userId, friendId);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id}/friends")
-    public ResponseEntity<List<User>> getFriends(@PathVariable Long id) {
+    public ResponseEntity<List<User>> getFriends(@PathVariable String id) {
         return ResponseEntity.ok(userService.getFriends(id));
+    }
+
+    @DeleteMapping("/{userId}/friends/{friendId}")
+    public ResponseEntity<Void> deleteFriendship(@PathVariable String userId, @PathVariable String friendId) {
+        userService.deleteFriendship(userId, friendId);
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,43 +1,57 @@
 package de.coderyders.rideapp.service;
 
+import de.coderyders.rideapp.model.Friendship;
 import de.coderyders.rideapp.model.User;
-import de.coderyders.rideapp.model.UserRepository;
-import jakarta.transaction.Transactional;
+import de.coderyders.rideapp.repository.FriendshipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
+    private static final String API_URL = "https://europe-west3-uryde-dev.cloudfunctions.net/user-getUsers";
+
     @Autowired
-    private UserRepository userRepository;
+    private RestTemplate restTemplate;
 
-    public User createUser(User user) {
-        return userRepository.save(user);
+    @Autowired
+    private FriendshipRepository friendshipRepository;
+
+    public List<User> getAllUsers() {
+        User[] users = restTemplate.getForObject(API_URL, User[].class);
+        return Arrays.asList(users);
     }
 
-    public User getUser(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public User getUser(String id) {
+        return getAllUsers().stream()
+                .filter(user -> user.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    public void addFriend(String userId, String friendId) {
+        friendshipRepository.save(new Friendship(userId, friendId));
+        friendshipRepository.save(new Friendship(friendId, userId));
     }
 
-    @Transactional
-    public void addFriend(Long userId, Long friendId) {
-        User user = getUser(userId);
-        User friend = getUser(friendId);
-        user.addFriend(friend);
-        userRepository.save(user);
+    public List<User> getFriends(String id) {
+        List<String> friendIds = friendshipRepository.findByUserId(id)
+                .stream()
+                .map(Friendship::getFriendId)
+                .collect(Collectors.toList());
+
+        return getAllUsers().stream()
+                .filter(user -> friendIds.contains(user.getId()))
+                .collect(Collectors.toList());
     }
 
-    public List<User> getFriends(Long id) {
-        User user = getUser(id);
-        return user.getFriends().stream().collect(Collectors.toList());
+    public void deleteFriendship(String userId, String friendId) {
+        friendshipRepository.deleteByUserIdAndFriendId(userId, friendId);
+        friendshipRepository.deleteByUserIdAndFriendId(friendId, userId);
     }
 }
