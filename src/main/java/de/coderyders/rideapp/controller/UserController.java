@@ -1,6 +1,6 @@
 package de.coderyders.rideapp.controller;
 
-import de.coderyders.rideapp.model.Reward;
+import de.coderyders.rideapp.model.ShopItem;
 import de.coderyders.rideapp.model.User;
 import de.coderyders.rideapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +70,7 @@ public class UserController {
     }
 
     @GetMapping("/rewards")
-    public ResponseEntity<Map<String, List<Reward>>> getRewards() {
+    public ResponseEntity<Map<String, List<ShopItem>>> getRewards() {
         return ResponseEntity.ok(userService.getRewards());
     }
 

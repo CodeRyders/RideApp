@@ -1,7 +1,7 @@
 package de.coderyders.rideapp.service;
 
 import de.coderyders.rideapp.model.Friendship;
-import de.coderyders.rideapp.model.Reward;
+import de.coderyders.rideapp.model.ShopItem;
 import de.coderyders.rideapp.model.User;
 import de.coderyders.rideapp.model.UserPoints;
 import de.coderyders.rideapp.repository.FriendshipRepository;
@@ -112,21 +112,21 @@ public class UserService {
         return user;
     }
 
-    private final List<Reward> rewards = Arrays.asList(
-            new Reward("Food", "Kaffee", 100),
-            new Reward("Food", "Schäufele", 350),
-            new Reward("Food", "Pizza Margarita", 300),
-            new Reward("Navistimmen", "Santa Claus", 50),
-            new Reward("Navistimmen", "Kermit", 250),
-            new Reward("Navistimmen", "Benjamin Blümchen", 250),
-            new Reward("Skins", "Schlitten", 50),
-            new Reward("Skins", "Frosch", 100),
-            new Reward("Skins", "Elefant", 100)
+    private final List<ShopItem> shopItems = Arrays.asList(
+            new ShopItem("Food", "Kaffee", 100),
+            new ShopItem("Food", "Schäufele", 350),
+            new ShopItem("Food", "Pizza Margarita", 300),
+            new ShopItem("Navistimmen", "Santa Claus", 50),
+            new ShopItem("Navistimmen", "Kermit", 250),
+            new ShopItem("Navistimmen", "Benjamin Blümchen", 250),
+            new ShopItem("Skins", "Schlitten", 50),
+            new ShopItem("Skins", "Frosch", 100),
+            new ShopItem("Skins", "Elefant", 100)
     );
 
-    public Map<String, List<Reward>> getRewards() {
-        return rewards.stream()
-                .collect(Collectors.groupingBy(Reward::getCategory));
+    public Map<String, List<ShopItem>> getRewards() {
+        return shopItems.stream()
+                .collect(Collectors.groupingBy(ShopItem::getCategory));
     }
 
     public String redeemReward(String userId, String rewardName) {
@@ -135,7 +135,7 @@ public class UserService {
             return "User not found";
         }
 
-        Optional<Reward> rewardOpt = rewards.stream()
+        Optional<ShopItem> rewardOpt = shopItems.stream()
                 .filter(r -> r.getName().equals(rewardName))
                 .findFirst();
 
@@ -143,13 +143,13 @@ public class UserService {
             return "Reward not found";
         }
 
-        Reward reward = rewardOpt.get();
+        ShopItem shopItem = rewardOpt.get();
 
-        if (user.getPoints() < reward.getCost()) {
+        if (user.getPoints() < shopItem.getCost()) {
             return "Not enough points";
         }
 
-        user = removePoints(userId, reward.getCost());
+        user = removePoints(userId, shopItem.getCost());
         if (user == null) {
             return "Error updating user points";
         }

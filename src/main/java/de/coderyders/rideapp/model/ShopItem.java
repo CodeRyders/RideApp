@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Reward {
+public class ShopItem {
     private String category;
     private String name;
     private int cost;
