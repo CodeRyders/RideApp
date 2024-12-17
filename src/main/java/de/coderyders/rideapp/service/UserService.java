@@ -66,7 +66,7 @@ public class UserService {
                 .forEach(user -> {
                     try {
                         UserInfo userInfo = userInfoRepository.findById(user.getId())
-                                .orElse(new UserInfo(user.getId()));
+                                .orElse(new UserInfo(user.getId(), 0, 0.0));
                         user.setUserInfo(userInfo);
                     } catch (Exception e) {
                         // Log the error and continue with the next user
