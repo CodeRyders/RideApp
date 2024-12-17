@@ -169,7 +169,7 @@ public class UserService {
 
     public RideReward calculateCO2Savings(String id, double distance, String[] passengers) {
         double verbrauch = distance * CO2_PER_KM;
-        double co2Saved = ((verbrauch * passengers.length) - verbrauch) / passengers.length;
+        double co2Saved = ((verbrauch * (passengers.length+1)) - verbrauch) / (passengers.length+1);
 
         RideReward rideReward = new RideReward();
         rideReward.setDriverId(id);
