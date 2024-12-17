@@ -1,5 +1,6 @@
 package de.coderyders.rideapp.controller;
 
+import de.coderyders.rideapp.model.RideReward;
 import de.coderyders.rideapp.model.ShopItem;
 import de.coderyders.rideapp.model.User;
 import de.coderyders.rideapp.service.UserService;
@@ -32,15 +33,15 @@ public class UserController {
         }
     }
 
+    @GetMapping("/{id}/friends")
+    public ResponseEntity<List<User>> getFriends(@PathVariable String id) {
+        return ResponseEntity.ok(userService.getFriends(id));
+    }
+
     @PostMapping("/{userId}/friends/{friendId}")
     public ResponseEntity<Void> addFriend(@PathVariable String userId, @PathVariable String friendId) {
         userService.addFriend(userId, friendId);
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/{id}/friends")
-    public ResponseEntity<List<User>> getFriends(@PathVariable String id) {
-        return ResponseEntity.ok(userService.getFriends(id));
     }
 
     @DeleteMapping("/{userId}/friends/{friendId}")
@@ -82,5 +83,10 @@ public class UserController {
         } else {
             return ResponseEntity.badRequest().body(result);
         }
+    }
+
+    @PostMapping("/{id}/rides/finish")
+    public RideReward finishRide(@PathVariable String id, @RequestParam double distance, @RequestParam String[] passengers) {
+        return userService.calculateCO2Savings(id, distance, passengers);
     }
 }

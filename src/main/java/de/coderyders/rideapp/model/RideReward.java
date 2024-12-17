@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class RideReward {
-    private Long id;
+    private String driverId;
+    private String[] passengers;
     private double distance;
-    private int passengers;
-    private String co2Saved;
+    private double co2Saved;
 }
