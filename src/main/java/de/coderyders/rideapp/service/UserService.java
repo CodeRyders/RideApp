@@ -3,6 +3,7 @@ package de.coderyders.rideapp.service;
 import de.coderyders.rideapp.model.*;
 import de.coderyders.rideapp.repository.FriendshipRepository;
 import de.coderyders.rideapp.repository.UserInfoRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -42,6 +43,17 @@ public class UserService {
             new ShopItem("Skins", "Frosch", 100),
             new ShopItem("Skins", "Elefant", 100)
     );
+
+    @PostConstruct
+    private void initializeInitialFriendships() {
+        List<User> users = getAllUsers();
+        if (users.size() >= 4) {
+            String firstUserId = users.get(0).getId();
+            for (int i = 1; i <= 3; i++) {
+                addFriend(firstUserId, users.get(i).getId());
+            }
+        }
+    }
 
 
     public List<User> getAllUsers() {
