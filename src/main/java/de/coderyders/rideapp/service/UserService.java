@@ -168,7 +168,8 @@ public class UserService {
     // Co2 Functionality
 
     public RideReward calculateCO2Savings(String id, double distance, String[] passengers) {
-        double co2Saved = distance * CO2_PER_KM * passengers.length;
+        double verbrauch = distance * CO2_PER_KM;
+        double co2Saved = ((verbrauch * passengers.length) - verbrauch) / passengers.length;
 
         RideReward rideReward = new RideReward();
         rideReward.setDriverId(id);
@@ -177,14 +178,24 @@ public class UserService {
 
         rideReward.setCo2Saved(Math.round(co2Saved * 100.0) / 100.0);
 
-        User user = getUser(id);
-        if (user != null) {
-            UserInfo userInfo = user.getUserInfo();
-            userInfo.setCo2Saved(userInfo.getCo2Saved() + co2Saved);
-            userInfoRepository.save(userInfo);
-            user.setUserInfo(userInfo);
+        User driver = getUser(id);
+        if (driver != null) {
+            updateUserCO2Saved(driver, co2Saved);
         }
 
+        for (String passengerId : passengers) {
+            User passenger = getUser(passengerId);
+            if (passenger != null) {
+                updateUserCO2Saved(passenger, co2Saved);
+            }
+        }
         return rideReward;
+    }
+
+    private void updateUserCO2Saved(User user, double co2Saved) {
+        UserInfo userInfo = user.getUserInfo();
+        userInfo.setCo2Saved(userInfo.getCo2Saved() + co2Saved);
+        userInfoRepository.save(userInfo);
+        user.setUserInfo(userInfo);
     }
 }
